@@ -11,6 +11,12 @@ class Mpv < Formula
     sha256 "952313badffafedb1398e8636111646c3e1cad28aaf20888d77526a3f5e37030" => :el_capitan
   end
 
+  devel do
+    url "https://github.com/mpv-player/mpv/archive/b387f82aa40a1655590bbb0dffe58f9728a37b49.zip"
+    sha256 "1e2e755591aeece3f708a0fd956b3a3c4358b277c0e763ba9e7175b8860b1b03"
+    version "0.26.1"
+  end
+
   option "with-bundle", "Enable compilation of the .app bundle."
 
   depends_on "pkg-config" => :build
