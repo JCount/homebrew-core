@@ -51,6 +51,11 @@ class Mpv < Formula
     sha256 "718c0f5fb677be0f34b781e04241c4067cbd9327b66bdd8e763201130f5175be"
   end
 
+  patch do
+    url "https://gist.github.com/JCount/cb97ee316e118834fdbf7cf82b72d1ad/raw/30816c3982d42b55020021029dbdf039d6705189/mpv_ewa_patch.diff"
+    sha256 "272a4cd62b0922127385da2cbfe443ec40cfd7cf7fe60b2b68aaf024e76bfc37"
+  end
+
   def install
     # LANG is unset by default on osx and causes issues when calling getlocale
     # or getdefaultlocale in docutils. Force the default c/posix locale since
