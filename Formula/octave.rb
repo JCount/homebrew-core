@@ -60,6 +60,18 @@ class Octave < Formula
   end
 
   def install
+    # Need to do explicit includes to have the configure script properly detect the frameworks
+    ENV.append "LIBS", ["-framework Carbon", "-framework Cocoa", "-framework CoreFoundation",
+                        "-framework CoreGraphics", "-framework OpenGL"].join(" ")
+    ENV.append_to_cflags %w[
+      -I/System/Library/Frameworks/Carbon.framework/Headers
+      -I/System/Library/Frameworks/Cocoa.framework/Headers
+      -I/System/Library/Frameworks/CoreFoundation.framework/Headers
+      -I/System/Library/Frameworks/CoreGraphics.framework/Headers
+      -I/System/Library/Frameworks/OpenGL.framework/Headers
+    ].join(" ")
+    ENV.append "LDFLAGS", "-F/System/Library/Frameworks"
+
     if build.stable?
       # Remove for > 4.2.1
       # Remove inline keyword on file_stat destructor which breaks macOS
@@ -67,6 +79,20 @@ class Octave < Formula
       # Upstream commit from 24 Feb 2017 http://hg.savannah.gnu.org/hgweb/octave/rev/a6e4157694ef
       inreplace "liboctave/system/file-stat.cc",
         "inline file_stat::~file_stat () { }", "file_stat::~file_stat () { }"
+
+      inreplace "configure", "        #include <Carbon/Carbon.h>",
+                ["        #include <Carbon/Carbon.h>", "#include <Cocoa/Cocoa.h>",
+                 "#include <CoreFoundation/CoreFoundation.h>",
+                 "#include <CoreGraphics/CoreGraphics.h>",
+                 "#include <OpenGL/OpenGL.h"].join("\n        ")
+
+      inreplace %w[configure libinterp/corefcn/cdisplay.c] do |s|
+        s.gsub! "#include <Carbon/Carbon.h>",
+                ["#include <Carbon/Carbon.h>", "#include <Cocoa/Cocoa.h>",
+                 "#include <CoreFoundation/CoreFoundation.h>",
+                 "#include <CoreGraphics/CoreGraphics.h>",
+                 "#include <OpenGL/OpenGL.h"].join("\n")
+      end
     end
 
     # Default configuration passes all linker flags to mkoctfile, to be
@@ -92,6 +118,7 @@ class Octave < Formula
                           "--with-sndfile"
     system "make", "all"
     system "make", "install"
+    system "make", "install-man"
   end
 
   test do
