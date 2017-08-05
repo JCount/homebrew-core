@@ -13,56 +13,35 @@ class Fltk < Formula
     sha256 "b30e0f6d843720c277f5e2c393abb2505d2fe69c8335c152f645ce87cc91d735" => :yosemite
   end
 
-  depends_on "cmake" => :build
   depends_on "doxygen" => :build
   depends_on "libpng"
   depends_on "jpeg"
 
   def install
-    #to enable OpenGL 3
-    # new_include = <<-EOS
-    #   #if defined(__APPLE__)
-    #   #  include <OpenGL/gl3.h> // defines OpenGL 3.0+ functions
-    #   #else
-    #   #  if defined(WIN32)
-    #   #    define GLEW_STATIC 1
-    #   #  endif
-    #   #  include <GL/glew.h>
-    #   #endif
-    # EOS
-    # FL/gl2opengl.h
+    # to enable OpenGL 3
+    new_include = <<-EOS
+      #if defined(__APPLE__)
+      #  include <OpenGL/OpenGL.h>
+      #  include <OpenGL/gl3.h> // defines OpenGL 3.0+ functions
+      #  include <OpenGL/gl3ext.h>
+      #else
+      #  if defined(WIN32)
+      #    define GLEW_STATIC 1
+      #  endif
+      #  include <GL/glew.h>
+      #endif
+    EOS
 
-    # inreplace "FL/gl.h", "\#    include <OpenGL/gl.h>",
-    #           "\#    include <OpenGL/gl3.h>\n\#    include <OpenGL/gl3ext.h>" 
-    inreplace "src/Fl_Gl_Choice.H", "\#  include <OpenGL/gl.h>",
-              "\#  include <OpenGL/gl3.h>\n\#  include <OpenGL/gl3ext.h>"
-    inreplace %w[
-      src/gl_start.cxx src/Fl_Gl_Window.cxx
-      src/gl_draw.cxx test/CubeView.h test/cube.cxx test/fullscreen.cxx
-      test/gl_overlay.cxx test/shape.cxx
-    ].each do |s|
-      s.gsub! "\#include <FL/gl.h>",
-              "\#include <OpenGL/gl3.h>\n\#include <OpenGL/gl3ext.h>", false
-      s.gsub! "\#  include <FL/gl.h>",
-              "\#  include <OpenGL/gl3.h>\n\#  include <OpenGL/gl3ext.h>", false
-    end
+    inreplace "src/gl_start.cxx", "\#include <FL/gl.h>", new_include
+    inreplace "src/gl_draw.cxx", "\#include <FL/gl.h>", new_include
 
-    # system "./configure", "--prefix=#{prefix}",
-    #                       "--enable-threads",
-    #                       "--enable-shared"
-    # system "make", "install"
-    args = std_cmake_args
-    args << "-DOPTION_APPLE_X11=OFF"
-    # args << "-DOPTION_BUILD_SHARED_LIBS=ON"
-    args << "-DOPTION_USE_GL=ON"
-    args << "-DOPTION_USE_THREADS=ON"
-    # args << "-DFLTK_CONFIG_PATH=${FLTK_DATADIR}/fltk"
-    args << "-DOPTION_BUILD_HTML_DOCUMENTATION=ON"
-    args << "-DOPTION_INSTALL_HTML_DOCUMENTATION=ON"
+    inreplace "src/Fl_Gl_Window.cxx", "\#include <FL/gl.h>",
+              "\#include <OpenGL/gl3.h>\n\#include <OpenGL/gl3ext.h>"
 
-    system "cmake", ".", *args
+    system "./configure", "--prefix=#{prefix}",
+                          "--enable-threads",
+                          "--enable-shared"
 
-    ENV.deparallelize
     system "make"
     system "make", "html"
     system "make", "install"
