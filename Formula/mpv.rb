@@ -63,6 +63,9 @@ class Mpv < Formula
     ENV["LC_ALL"] = "C"
 
     inreplace "video/out/opengl/video_shaders.c", "if (use_gather) {", "if (false) {"
+    # choose a renderer capable of GL4.1 or later for context
+    inreplace "video/out/opengl/context_cocoa.c", "kCGLOGLPVersion_3_2_Core,",
+              "kCGLOGLPVersion_GL4_Core,\n        kCGLOGLPVersion_3_2_Core,"
 
     ENV.prepend_create_path "PYTHONPATH", buildpath/"vendor/lib/python2.7/site-packages"
     resource("docutils").stage do
