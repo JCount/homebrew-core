@@ -17,11 +17,14 @@ class NodeAT6 < Formula
   option "with-openssl", "Build against Homebrew's OpenSSL instead of the bundled OpenSSL"
   option "without-npm", "npm will not be installed"
   option "without-completion", "npm bash completion will not be installed"
-  option "with-full-icu", "Build with full-icu (all locales) instead of small-icu (English only)"
+  option "without-icu4c", "Build with small-icu (English only) instead of system-icu (all locales)"
 
   depends_on :python => :build if MacOS.version <= :snow_leopard
   depends_on "pkg-config" => :build
+  depends_on "icu4c" => :recommended
   depends_on "openssl" => :optional
+
+  needs :cxx11
 
   # Per upstream - "Need g++ 4.8 or clang++ 3.4".
   fails_with :clang if MacOS.version <= :snow_leopard
@@ -37,24 +40,17 @@ class NodeAT6 < Formula
     sha256 "dd96ece7cbd6186a51ca0a5ab7e1de0113333429603ec2ccb6259e0bef2e03eb"
   end
 
-  resource "icu4c" do
-    url "https://ssl.icu-project.org/files/icu4c/58.2/icu4c-58_2-src.tgz"
-    mirror "https://fossies.org/linux/misc/icu4c-58_2-src.tgz"
-    version "58.2"
-    sha256 "2b0a4410153a9b20de0e20c7d8b66049a72aef244b53683d0d7521371683da0c"
-  end
-
   def install
+    ENV.cxx11
+
+    inreplace "src/util.h", "#define USE_TR1_TYPE_TRAITS", "#define BLANK_SPACE"
+
     # Never install the bundled "npm", always prefer our
     # installation from tarball for better packaging control.
     args = %W[--prefix=#{prefix} --without-npm]
     args << "--debug" if build.with? "debug"
+    args << "--with-intl=system-icu" if build.with? "icu4c"
     args << "--shared-openssl" if build.with? "openssl"
-
-    if build.with? "full-icu"
-      resource("icu4c").stage buildpath/"deps/icu"
-      args << "--with-intl=full-icu"
-    end
 
     system "./configure", *args
     system "make", "install"
@@ -114,27 +110,13 @@ class NodeAT6 < Formula
   end
 
   def caveats
-    s = ""
-
     if build.without? "npm"
-      s += <<-EOS.undent
+      <<-EOS.undent
         Homebrew has NOT installed npm. If you later install it, you should supplement
         your NODE_PATH with the npm module folder:
           #{HOMEBREW_PREFIX}/lib/node_modules
       EOS
     end
-
-    if build.without? "full-icu"
-      s += <<-EOS.undent
-        Please note by default only English locale support is provided. If you need
-        full locale support you should either rebuild with full icu:
-          `brew reinstall node --with-full-icu`
-        or add full icu data at runtime following:
-          https://github.com/nodejs/node/wiki/Intl#using-and-customizing-the-small-icu-build
-      EOS
-    end
-
-    s
   end
 
   test do
@@ -145,7 +127,7 @@ class NodeAT6 < Formula
     assert_equal "hello", output
     output = shell_output("#{bin}/node -e 'console.log(new Intl.NumberFormat(\"en-EN\").format(1234.56))'").strip
     assert_equal "1,234.56", output
-    if build.with? "full-icu"
+    if build.with? "icu4c"
       output = shell_output("#{bin}/node -e 'console.log(new Intl.NumberFormat(\"de-DE\").format(1234.56))'").strip
       assert_equal "1.234,56", output
     end
