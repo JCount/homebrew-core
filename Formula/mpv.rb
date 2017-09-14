@@ -11,12 +11,6 @@ class Mpv < Formula
     sha256 "952313badffafedb1398e8636111646c3e1cad28aaf20888d77526a3f5e37030" => :el_capitan
   end
 
-  devel do
-    url "https://github.com/mpv-player/mpv/archive/b387f82aa40a1655590bbb0dffe58f9728a37b49.zip"
-    sha256 "1e2e755591aeece3f708a0fd956b3a3c4358b277c0e763ba9e7175b8860b1b03"
-    version "0.26.1"
-  end
-
   option "with-bundle", "Enable compilation of the .app bundle."
 
   depends_on "pkg-config" => :build
@@ -50,11 +44,6 @@ class Mpv < Formula
     url "https://files.pythonhosted.org/packages/05/25/7b5484aca5d46915493f1fd4ecb63c38c333bd32aa9ad6e19da8d08895ae/docutils-0.13.1.tar.gz"
     sha256 "718c0f5fb677be0f34b781e04241c4067cbd9327b66bdd8e763201130f5175be"
   end
-
-  # patch do
-  #   url "https://gist.github.com/JCount/cb97ee316e118834fdbf7cf82b72d1ad/raw/30816c3982d42b55020021029dbdf039d6705189/mpv_ewa_patch.diff"
-  #   sha256 "272a4cd62b0922127385da2cbfe443ec40cfd7cf7fe60b2b68aaf024e76bfc37"
-  # end
 
   def install
     # LANG is unset by default on osx and causes issues when calling getlocale
