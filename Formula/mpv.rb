@@ -11,6 +11,15 @@ class Mpv < Formula
     sha256 "952313badffafedb1398e8636111646c3e1cad28aaf20888d77526a3f5e37030" => :el_capitan
   end
 
+  devel do
+    # url "https://github.com/mpv-player/mpv/archive/baffe6bcbc3d606c357642667ad3da486cc075ee.zip"
+    url "https://github.com/mpv-player/mpv/archive/89cdccfa6c757a2cb0cdc5cd04f99237cf175a16.zip"
+    # version "0.27.1"
+    version "0.27.2"
+    # sha256 "d41db23ee1c30d90a56a1dd3698abb85c6e3980fa509e26f8ab54ae864603a81"
+    sha256 "560835d3045c3b8cdf7876c349b41f6c9d8f6d83122778af9ddea186c0760907"
+  end
+
   option "with-bundle", "Enable compilation of the .app bundle."
 
   depends_on "pkg-config" => :build
@@ -51,7 +60,7 @@ class Mpv < Formula
     # that's good enough for building the manpage.
     ENV["LC_ALL"] = "C"
 
-    inreplace "video/out/opengl/video_shaders.c", "if (use_gather) {", "if (false) {"
+    # inreplace "video/out/opengl/video_shaders.c", "if (use_gather) {", "if (false) {"
     # choose a renderer capable of GL4.1 or later for context
     inreplace "video/out/opengl/context_cocoa.c", "kCGLOGLPVersion_3_2_Core,",
               "kCGLOGLPVersion_GL4_Core,\n        kCGLOGLPVersion_3_2_Core,"
