@@ -14,7 +14,7 @@ class ShibbolethSp < Formula
   option "with-apache-22", "Build mod_shib_22.so instead of mod_shib_24.so"
 
   depends_on :macos => :yosemite
-  depends_on "curl" => "with-openssl"
+  depends_on "curl"
   depends_on "opensaml"
   depends_on "xml-tooling-c"
   depends_on "xerces-c"
@@ -22,6 +22,7 @@ class ShibbolethSp < Formula
   depends_on "log4shib"
   depends_on "boost"
   depends_on "unixodbc"
+  depends_on "homebrew/apache/httpd24"
 
   depends_on "apr-util" => :build
   depends_on "apr" => :build
@@ -37,6 +38,7 @@ class ShibbolethSp < Formula
       --sysconfdir=#{etc}
       --with-xmltooling=#{Formula["xml-tooling-c"].opt_prefix}
       --with-saml=#{Formula["opensaml"].opt_prefix}
+      --with-apxs24=#{Formula["homebrew/apache/httpd24"].opt_bin}/apxs
       DYLD_LIBRARY_PATH=#{lib}
     ]
     if build.with? "apache-22"
