@@ -3,6 +3,7 @@ class Libarchive < Formula
   homepage "https://www.libarchive.org"
   url "https://www.libarchive.org/downloads/libarchive-3.3.2.tar.gz"
   sha256 "ed2dbd6954792b2c054ccf8ec4b330a54b85904a80cef477a1c74643ddafa0ce"
+  revision 1
 
   bottle do
     cellar :any
@@ -17,6 +18,13 @@ class Libarchive < Formula
   depends_on "xz" => :recommended
   depends_on "lz4" => :optional
   depends_on "lzop" => :optional
+
+  # upstream patch to fix weak symbol binding issues against futimens and utimensat
+  # "Do not use nanosecond file time APIs on macOS < 10.13"
+  patch do
+    url "https://github.com/libarchive/libarchive/commit/47bec12b98b.patch?full_index=1"
+    sha256 "0e33e4b71e17a58319ade3cebaa0dd4ccd100bc213ce6e1dd8537e8153bcbcec"
+  end
 
   def install
     system "./configure",
