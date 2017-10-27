@@ -23,4 +23,32 @@ class Unittest < Formula
   test do
     system "#{pkgshare}/unittesttest"
   end
+
+  test do
+    # Test primarily lifted from unittest's documentation
+    (testpath/"test.cpp").write <<~EOS
+      #include <iostream>
+      #include <stack>
+      #include "unittest/UnitTest.hpp"
+      class SinglePush {
+      public:
+        void run() {
+          std::stack<int> bstack;
+
+          ASSERT(bstack.empty());
+
+          bstack.push(3);
+          ASSERT(!bstack.empty());
+          ASSERT_EQUALS(3, bstack.top());
+        }
+      };
+      int main() {
+        SinglePush test;
+        test.run();
+        return 0;
+      }
+    EOS
+    system ENV.cxx, "test.cpp", "-o", "test", "-I#{include}", "-L#{lib}", "-lunittest"
+    system "./test"
+  end
 end
