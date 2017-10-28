@@ -1,10 +1,8 @@
 class Hashcat < Formula
   desc "World's fastest and most advanced password recovery utility"
   homepage "https://hashcat.net/hashcat/"
-  url "https://hashcat.net/files/hashcat-3.6.0.tar.gz"
-  # Note the mirror will return 301 until the version becomes outdated.
-  mirror "https://hashcat.net/files_legacy/hashcat-3.6.0.tar.gz"
-  sha256 "3ef7550a4fbd083e583a1dc1e482f1476a36ad95c340b64b3e50cd68f06ef088"
+  url "https://hashcat.net/files/hashcat-4.0.0.tar.gz"
+  sha256 "9e8cb81bf26024eca2e117ddf8fd16316af3dd337ecf4e9917acbb1720c13b50"
   version_scheme 1
 
   head "https://github.com/hashcat/hashcat.git"
@@ -24,7 +22,10 @@ class Hashcat < Formula
   depends_on :macos => :yosemite
 
   def install
-    system "make", "install", "CC=#{ENV.cc}", "PREFIX=#{prefix}"
+    inreplace "src/Makefile", '| $(SED) \'s/.*: v\([\.0-9]*\),.*/v\1/\')',
+                              '| $(SED) \'s/.*: v\([\.0-9]*\),\?.*/v\1/\')'
+    system "make", "install", "CC=#{ENV.cc}", "PREFIX=#{prefix}",
+                              "SED=gsed", "SED_IN_PLACE=-i"
   end
 
   test do
