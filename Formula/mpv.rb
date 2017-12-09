@@ -22,7 +22,7 @@ class Mpv < Formula
 
   depends_on "jpeg" => :recommended
   depends_on "little-cms2" => :recommended
-  depends_on "lua" => :recommended
+  depends_on "luajit" => :recommended
   depends_on "youtube-dl" => :recommended
 
   depends_on "jack" => :optional
@@ -76,6 +76,7 @@ class Mpv < Formula
     args << "--enable-libbluray" if build.with? "libbluray"
     args << "--enable-dvdnav" if build.with? "libdvdnav"
     args << "--enable-dvdread" if build.with? "libdvdread"
+    args << "--lua=luajit" if build.with? "luajit"
     args << "--enable-pulse" if build.with? "pulseaudio"
 
     system "./bootstrap.py"
