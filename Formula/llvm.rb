@@ -136,7 +136,7 @@ class Llvm < Formula
   # for the 'dot' tool (lldb)
   depends_on "graphviz" => :optional
 
-  depends_on "ocaml" => :optional
+  depends_on "ocaml" => :recommended
   if build.with? "ocaml"
     depends_on "opam" => :build
     depends_on "pkg-config" => :build
