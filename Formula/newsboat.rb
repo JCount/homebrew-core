@@ -13,7 +13,6 @@ class Newsboat < Formula
 
   depends_on "asciidoc" => :build
   depends_on "docbook-xsl" => :build
-  depends_on "libxml2" => :build
   depends_on "pkg-config" => :build
   depends_on "gettext"
   depends_on "json-c"
