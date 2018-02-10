@@ -14,7 +14,7 @@ class X264 < Formula
     sha256 "3ac151bdd5cf62a55fb41c60761c548db721a7b6c1ebc6f4af5b4fc71b499e7f" => :el_capitan
   end
 
-  option "with-10-bit", "Build a 10-bit x264 (default: 8-bit)"
+  option "with-10-bit", "Build a 10-bit x264 (default: 8-bit)" unless build.head?
   option "with-l-smash", "Build CLI with l-smash mp4 output"
 
   depends_on "nasm" => :build
@@ -30,7 +30,7 @@ class X264 < Formula
       --enable-strip
     ]
     args << "--disable-lsmash" if build.without? "l-smash"
-    args << "--bit-depth=10" if build.with? "10-bit"
+    args << "--bit-depth=10" if build.with?("10-bit") && !build.head?
 
     system "./configure", *args
     system "make", "install"
