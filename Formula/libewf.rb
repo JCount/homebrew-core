@@ -39,7 +39,8 @@ class Libewf < Formula
     end
     system "./configure", "--disable-dependency-tracking",
                           "--disable-silent-rules",
-                          "--prefix=#{prefix}"
+                          "--prefix=#{prefix}",
+                          "--without-libfuse"
     system "make", "install"
   end
 
