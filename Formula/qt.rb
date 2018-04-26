@@ -44,6 +44,12 @@ class Qt < Formula
   end
 
   def install
+    # Fix https://bugreports.qt.io/browse/QTBUG-67545
+    # 'error: qualified reference to 'QFixed' is a constructor name rather than a type in this context' 
+    inreplace "qtbase/src/platformsupport/fontdatabases/mac/qfontengine_coretext.mm",
+              "QFixed::QFixed(int(CTFontGetUnitsPerEm(ctfont)));",
+              "QFixed(int(CTFontGetUnitsPerEm(ctfont)));"
+
     args = %W[
       -verbose
       -prefix #{prefix}
