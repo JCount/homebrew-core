@@ -3,8 +3,8 @@ class LSmash < Formula
   homepage "https://l-smash.github.io/l-smash/"
   url "https://github.com/l-smash/l-smash.git",
       :shallow => false,
-      :tag => "v2.9.1",
-      :revision => "4cea08d264933634db5bc06da9d8d88fb5ddae07"
+      :tag => "v2.14.5",
+      :revision => "5b85a6bf9ca8924144bd3026b17355638a6b7430"
   head "https://github.com/l-smash/l-smash.git"
 
   bottle do
@@ -17,7 +17,14 @@ class LSmash < Formula
     sha256 "5e2cd2ae65a0aeb7d1429f18fbd41dd7bdbfc03fcd10f320e41fc0cf6c95aef4" => :mountain_lion
   end
 
+  depends_on "gnu-sed" => :build
+
   def install
+    # Workaround for: 'ld: unknown option: --version-script'
+    inreplace "configure", "-Wl,--version-script,liblsmash.ver", ""
+
+    ENV.prepend_path "PATH", "#{Formula["gnu-sed"].opt_libexec}/gnubin"
+
     system "./configure", "--prefix=#{prefix}", "--enable-shared"
     system "make", "install"
   end
