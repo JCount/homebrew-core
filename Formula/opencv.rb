@@ -1,9 +1,8 @@
 class Opencv < Formula
   desc "Open source computer vision library"
   homepage "https://opencv.org/"
-  url "https://github.com/opencv/opencv/archive/4.1.0.tar.gz"
-  sha256 "8f6e4ab393d81d72caae6e78bd0fd6956117ec9f006fba55fcdb88caf62989b7"
-  revision 2
+  url "https://github.com/opencv/opencv/archive/4.1.1.tar.gz"
+  sha256 "5de5d96bdfb9dad6e6061d70f47a0a91cee96bb35afb9afb9ecb3d43e243d217"
 
   bottle do
     sha256 "3be6de71c28077e5279ffb0104729b0cef1267f81908e6ea0fb404fb81d913e6" => :mojave
@@ -27,13 +26,8 @@ class Opencv < Formula
   depends_on "tbb"
 
   resource "contrib" do
-    url "https://github.com/opencv/opencv_contrib/archive/4.1.0.tar.gz"
-    sha256 "e7d775cc0b87b04308823ca518b11b34cc12907a59af4ccdaf64419c1ba5e682"
-  end
-
-  patch do
-    url "https://github.com/opencv/opencv/pull/14308.patch?full_index=1"
-    sha256 "c48a6a769f364e6f61bc99cf47a6e664c85246c9fcd4a201afc408158fc4f1ef"
+    url "https://github.com/opencv/opencv_contrib/archive/4.1.1.tar.gz"
+    sha256 "9f85d380758498d800fec26307e389620cde8b1a2e86ab51cddc5200fbe37102"
   end
 
   def install
@@ -54,19 +48,23 @@ class Opencv < Formula
 
     args = std_cmake_args + %W[
       -DCMAKE_OSX_DEPLOYMENT_TARGET=
+      -DBUILD_IPP_IW=OFF
+      -DBUILD_ITT=OFF
       -DBUILD_JASPER=OFF
-      -DBUILD_JPEG=ON
+      -DBUILD_JPEG=OFF
       -DBUILD_OPENEXR=OFF
       -DBUILD_PERF_TESTS=OFF
       -DBUILD_PNG=OFF
       -DBUILD_TESTS=OFF
+      -DBUILD_TBB=OFF
       -DBUILD_TIFF=OFF
+      -DBUILD_WEBP=OFF
       -DBUILD_ZLIB=OFF
       -DBUILD_opencv_hdf=OFF
       -DBUILD_opencv_java=OFF
       -DBUILD_opencv_text=ON
       -DOPENCV_ENABLE_NONFREE=ON
-      -DOPENCV_EXTRA_MODULES_PATH=#{buildpath}/opencv_contrib/modules
+      -DOPENCV_EXTRA_MODULES_PATH=#{buildpath}/opencv_contrib/modules\ #{buildpath}
       -DOPENCV_GENERATE_PKGCONFIG=ON
       -DWITH_1394=OFF
       -DWITH_CUDA=OFF
@@ -74,12 +72,17 @@ class Opencv < Formula
       -DWITH_FFMPEG=ON
       -DWITH_GPHOTO2=OFF
       -DWITH_GSTREAMER=OFF
+      -DWITH_IPP=OFF
+      -DWITH_ITT=OFF
       -DWITH_JASPER=OFF
+      -DWITH_JPEG=ON
       -DWITH_OPENEXR=ON
       -DWITH_OPENGL=OFF
+      -DWITH_PNG=ON
       -DWITH_QT=OFF
       -DWITH_TBB=ON
       -DWITH_VTK=OFF
+      -DWITH_OPENCL=OFF
       -DBUILD_opencv_python2=ON
       -DBUILD_opencv_python3=ON
       -DPYTHON2_EXECUTABLE=#{which "python"}
